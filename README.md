@@ -1,32 +1,46 @@
-# React + TypeScript + Vite
+# 🚀 DevFlow Kanban | Portfolio-Grade Project Management Board
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> A fully responsive, feature-rich Kanban task management application built with modern React, TypeScript, and Tailwind CSS. Designed with a robust local-first state architecture and mobile-optimized views.
 
-Currently, two official plugins are available:
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=flat-for-the-badge&logo=react&logoColor=61DAFB)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-for-the-badge&logo=vite&logoColor=white)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**DevFlow Kanban** is a high-performance project management dashboard built to simulate professional task tracking tools like Jira or Trello. It was engineered to solve common frontend state-management challenges while providing an impeccably smooth user experience across both desktop and mobile viewports.
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## 🛠️ Key Features & Architecture
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+- **Normalized State Management:** Uses a custom `useBoard` hook that decouples tasks and columns using dictionary lookups (`Record<string, Task>`) paired with ordered ID arrays, ensuring clean scaling and zero performance degradation.
+- **Robust Local-First Persistence:** Automatically synchronizes and persists all board changes to the browser’s `localStorage`, ensuring user data remains intact across sessions.
+- **Full CRUD Capabilities:** Add tasks, edit details, assign priorities (Low, Medium, High), organize with comma-separated tags, set due dates, and track interactive multi-item subtasks.
+- **Cross-Column Task Movement & Reordering:** Features intuitive drag-and-drop mechanics alongside a quick-action card menu to effortlessly move tasks between columns.
+- **Responsive Mobile Tab-Switcher:** Designed with mobile-first constraints in mind—automatically collapsing wide columns into an adaptive single-column tab layout for mobile devices (<640px) without sacrificing functionality.
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 💻 Tech Stack
+
+- **Frontend Framework:** React (v19) with functional hooks and strict TypeScript typing.
+- **Styling:** Tailwind CSS (v4) for utility-first responsive styling and custom animations.
+- **Icons:** Lucide React for crisp, scalable vector UI indicators.
+- **Build Tool:** Vite for lightning-fast bundling, HMR, and optimal production builds.
+- **ID Generation:** UUID for unique, collision-free task and subtask identification.
+
+---
+
+## 🚀 Getting Started Locally
+
+To run this project locally on your machine, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/AhmedAbuzed7/kanban-board.git](https://github.com/AhmedAbuzed7/kanban-board.git)
+   cd kanban-board
+   ```
