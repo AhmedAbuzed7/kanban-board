@@ -1,66 +1,115 @@
 // src/App.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useBoard } from "./hooks/useBoard";
 import { Navbar } from "./components/Navbar";
 import { Board } from "./components/Board";
 import { TaskModal } from "./components/TaskModal";
-import type { Priority, Subtask } from "./types/kanban";
+import type { Task } from "./types/kanban";
 
 export function App() {
-  const { board, addTask, deleteTask, toggleSubtask, moveTask } = useBoard();
+  const {
+    board,
+    deleteTask,
+    toggleSubtask,
+    addTask,
+    updateTask,
+    moveTask,
+    addColumn,
+    updateColumn,
+    deleteColumn,
+  } = useBoard();
 
-  // Modal State Control
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Dark mode state with localStorage persistence
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem("devflow_theme_mode");
+      return saved ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("devflow_theme_mode", JSON.stringify(isDarkMode));
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    } catch (err) {
+      console.error("Failed to save theme preference", err);
+    }
+  }, [isDarkMode]);
+
+  // Modal state for Add/Edit tasks
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [targetColumnId, setTargetColumnId] = useState<string>("col-todo");
+  const [modalColumnId, setModalColumnId] = useState<string>("col-todo");
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  // Handler when clicking "New Task" in the Navbar
-  const handleOpenNavbarModal = () => {
-    setTargetColumnId("col-todo");
+  const handleOpenAddTask = (columnId: string) => {
+    setModalColumnId(columnId);
+    setEditingTask(null);
     setIsModalOpen(true);
   };
 
-  // Handler when clicking the "+" button inside a specific column header
-  const handleOpenColumnModal = (columnId: string) => {
-    setTargetColumnId(columnId);
+  const handleOpenEditTask = (task: Task) => {
+    setModalColumnId(task.columnId);
+    setEditingTask(task);
     setIsModalOpen(true);
   };
 
-  // Handler when submitting the task form modal
-  const handleSaveTask = (taskData: {
-    title: string;
-    description: string;
-    priority: Priority;
-    tags: string[];
-    dueDate: string;
-    subtasks: Subtask[];
-  }) => {
-    addTask(targetColumnId, taskData);
-  };
-
-  const activeColumnTitle = board.columns[targetColumnId]?.title || "To Do";
+  const activeColumn = board.columns[modalColumnId];
+  const columnTitle = activeColumn ? activeColumn.title : "To Do";
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-100">
-      {/* Top Navbar */}
-      <Navbar onNewTaskClick={handleOpenNavbarModal} />
+    <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans overflow-hidden transition-colors duration-200">
+      {/* Top Navbar with Search Bar & Theme Toggle */}
+      <Navbar
+        onNewTaskClick={() =>
+          handleOpenAddTask(board.columnOrder[0] || "col-todo")
+        }
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+      />
 
-      {/* Main Kanban Board View */}
-      <main className="flex-1 overflow-x-auto overflow-y-hidden flex flex-col pt-6">
+      {/* Main Kanban Board Container */}
+      <main className="flex-1 overflow-hidden pt-6">
         <Board
           board={board}
+          searchQuery={searchQuery}
           onDeleteTask={deleteTask}
           onToggleSubtask={toggleSubtask}
-          onAddTaskClick={handleOpenColumnModal}
+          onAddTaskClick={handleOpenAddTask}
           onMoveTask={moveTask}
+          onEditTask={handleOpenEditTask}
+          onAddColumn={addColumn}
+          onUpdateColumn={updateColumn}
+          onDeleteColumn={deleteColumn}
         />
       </main>
 
-      {/* Interactive Task Creation Modal */}
+      {/* Task Creation / Editing Modal */}
       <TaskModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveTask}
-        columnTitle={activeColumnTitle}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingTask(null);
+        }}
+        columnTitle={columnTitle}
+        initialTask={editingTask}
+        onSave={(taskData) => {
+          if (editingTask) {
+            updateTask(editingTask.id, taskData);
+          } else {
+            addTask(modalColumnId, taskData);
+          }
+          setEditingTask(null);
+        }}
       />
     </div>
   );

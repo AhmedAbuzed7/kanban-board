@@ -1,6 +1,6 @@
 // src/components/TaskModal.tsx
-import React, { useState } from "react";
-import type { Priority, Subtask } from "../types/kanban";
+import React, { useState, useEffect } from "react";
+import type { Priority, Subtask, Task } from "../types/kanban";
 import { X, Plus, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,6 +16,7 @@ interface TaskModalProps {
     subtasks: Subtask[];
   }) => void;
   columnTitle: string;
+  initialTask?: Task | null;
 }
 
 export const TaskModal: React.FC<TaskModalProps> = ({
@@ -23,6 +24,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   onClose,
   onSave,
   columnTitle,
+  initialTask = null,
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -31,10 +33,27 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [dueDate, setDueDate] = useState(
     new Date().toISOString().split("T")[0],
   );
-
-  // Subtasks state for the form
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+
+  // Populate form fields whenever modal opens or initialTask changes
+  useEffect(() => {
+    if (initialTask) {
+      setTitle(initialTask.title || "");
+      setDescription(initialTask.description || "");
+      setPriority(initialTask.priority || "medium");
+      setTagInput(initialTask.tags ? initialTask.tags.join(", ") : "");
+      setDueDate(initialTask.dueDate || new Date().toISOString().split("T")[0]);
+      setSubtasks(initialTask.subtasks || []);
+    } else {
+      setTitle("");
+      setDescription("");
+      setPriority("medium");
+      setTagInput("Portfolio, React");
+      setDueDate(new Date().toISOString().split("T")[0]);
+      setSubtasks([]);
+    }
+  }, [initialTask, isOpen]);
 
   if (!isOpen) return null;
 
@@ -57,7 +76,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     e.preventDefault();
     if (!title.trim()) return;
 
-    // Convert comma-separated tags string into clean array
     const tags = tagInput
       .split(",")
       .map((t) => t.trim())
@@ -72,12 +90,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       subtasks,
     });
 
-    // Reset form fields
-    setTitle("");
-    setDescription("");
-    setPriority("medium");
-    setSubtasks([]);
-    setNewSubtaskTitle("");
     onClose();
   };
 
@@ -87,9 +99,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
           <div>
-            <h3 className="font-bold text-gray-900 text-base">Add New Task</h3>
+            <h3 className="font-bold text-gray-900 text-base">
+              {initialTask ? "Edit Task" : "Add New Task"}
+            </h3>
             <p className="text-xs text-gray-500">
-              Adding to{" "}
+              {initialTask ? "Modifying existing task" : "Adding to"}{" "}
               <span className="font-semibold text-indigo-600">
                 {columnTitle}
               </span>
@@ -237,7 +251,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               type="submit"
               className="px-5 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm shadow-indigo-200 transition-colors cursor-pointer"
             >
-              Create Task
+              {initialTask ? "Save Changes" : "Create Task"}
             </button>
           </div>
         </form>
