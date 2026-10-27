@@ -18,20 +18,23 @@
 ## 🛠️ Key Features & Architecture
 
 - **Normalized State Management:** Uses a custom `useBoard` hook that decouples tasks and columns using dictionary lookups (`Record<string, Task>`) paired with ordered ID arrays, ensuring clean scaling and zero performance degradation.
-- **Robust Local-First Persistence:** Automatically synchronizes and persists all board changes to the browser’s `localStorage`, ensuring user data remains intact across sessions.
-- **Full CRUD Capabilities:** Add tasks, edit details, assign priorities (Low, Medium, High), organize with comma-separated tags, set due dates, and track interactive multi-item subtasks.
-- **Cross-Column Task Movement & Reordering:** Features intuitive drag-and-drop mechanics alongside a quick-action card menu to effortlessly move tasks between columns.
-- **Responsive Mobile Tab-Switcher:** Designed with mobile-first constraints in mind—automatically collapsing wide columns into an adaptive single-column tab layout for mobile devices (<640px) without sacrificing functionality.
+- **Robust Local-First Persistence:** Automatically synchronizes and persists all board state, tasks, columns, and user preferences to the browser’s `localStorage`.
+- **Full CRUD & Inline Editing:**
+  - Add, edit, and delete tasks with priority labels (Low, Medium, High), comma-separated tags, due dates, and interactive subtask checklists.
+  - **Dynamic Column Management:** Add custom workflow columns, delete obsolete columns, and **inline-rename column titles** with a single click.
+- **Live Search & Filtering Bar:** Instantly filter tasks in real-time across titles, descriptions, and tags.
+- **Persistent Light / Dark Mode:** Integrated theme switcher powered by Tailwind CSS with persistent state storage across sessions.
+- **Cross-Column Task Movement:** Features intuitive HTML5 drag-and-drop mechanics alongside a quick-action card menu to effortlessly move tasks between columns.
+- **Responsive Mobile Tab-Switcher:** Designed with mobile-first constraints in mind—automatically collapsing wide columns into an adaptive single-column tab layout for mobile devices (<640px).
 
 ---
 
 ## 💻 Tech Stack
 
-- **Frontend Framework:** React (v19) with functional hooks and strict TypeScript typing.
-- **Styling:** Tailwind CSS (v4) for utility-first responsive styling and custom animations.
+- **Frontend Framework:** React with functional hooks and strict TypeScript typing.
+- **Styling:** Tailwind CSS (v4) for utility-first responsive styling and custom variants.
 - **Icons:** Lucide React for crisp, scalable vector UI indicators.
 - **Build Tool:** Vite for lightning-fast bundling, HMR, and optimal production builds.
-- **ID Generation:** UUID for unique, collision-free task and subtask identification.
 
 ---
 
